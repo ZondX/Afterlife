@@ -12,6 +12,7 @@ public class Hook : MonoBehaviour
     private DistanceJoint2D _distanceJoint;
     private LineRenderer _lineRenderer;
     private bool _cheak;
+    [SerializeField] private LayerMask _mask;
     void Start()
     {
         _camera = Camera.main;
@@ -26,27 +27,30 @@ public class Hook : MonoBehaviour
     void Update()
     {
         MouseMove();
-        RaycastHit2D rayHit = Physics2D.Raycast(_camera.transform.position, _mousePosition, Mathf.Infinity);
-        if (Input.GetMouseButton(0) && _cheak && rayHit)
+        RaycastHit2D rayHit = Physics2D.Raycast(_camera.transform.position, _mousePosition, Mathf.Infinity, _mask);
+        if (Input.GetMouseButtonDown(0) && _cheak && rayHit)
         {
             _distanceJoint.enabled = true;
-            _distanceJoint.connectedAnchor = _mousePosition;
+            _distanceJoint.connectedAnchor = rayHit.point;
             _lineRenderer.positionCount = 2;
-            _currentPosition = _mousePosition;
+            _currentPosition = rayHit.point;
             _cheak = false;
         }
-        else if(Input.GetMouseButton(0))
+        else if(Input.GetMouseButtonUp(0))
         {
             _distanceJoint.enabled = false;
             _cheak = true;
             _lineRenderer.positionCount = 0;
         }
+        DrawLine();
     }
     private void DrawLine()
     {
-        if(_lineRenderer.positionCount <= 0) return;
+        if(_lineRenderer.positionCount > 0)
+        {
         _lineRenderer.SetPosition(0, transform.position);
         _lineRenderer.SetPosition(1, _currentPosition);
+        }
     }
     private void MouseMove()
     {
