@@ -31,6 +31,7 @@ public class Hook : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && _cheak && rayHit)
         {
             _distanceJoint.enabled = true;
+            _distanceJoint.distance = Vector2.Distance(transform.position, rayHit.point);
             _distanceJoint.connectedAnchor = rayHit.point;
             _lineRenderer.positionCount = 2;
             _currentPosition = rayHit.point;
